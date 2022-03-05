@@ -28,7 +28,7 @@ def create_udp_send_socket(is_server: bool):
 
     if is_server:
         print_message("Created UDP send socket on SERVER.")
-        send_socket.bind(('', server_send_port))
+        send_socket.bind((server_local_address, server_send_port))
     else:
         print_message("Created UDP send socket on CLIENT.")
         send_socket.bind(('', 0))
@@ -43,7 +43,7 @@ def create_udp_recv_socket(is_server: bool):
 
     if is_server:
         print_message("Created UDP receive socket on SERVER.")
-        recv_socket.bind(('', server_recv_port))
+        recv_socket.bind((server_local_address, server_recv_port))
     else:
         print_message("Created UDP receive socket on CLIENT.")
         recv_socket.bind(('', 0))

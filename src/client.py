@@ -1,33 +1,49 @@
-import socket
 
- 
+from log_util import print_message
+from transmission_util import create_sockets
+import time
 
-msgFromClient       = "Hello UDP Server"
 
-bytesToSend         = str.encode(msgFromClient)
+def create_message():
+    """Create a message."""
 
-serverAddressPort   = ("https://glacial-plateau-45426.herokuapp.com", 80)
+def read_message():
+    """Read a message."""
 
-bufferSize          = 1024
+def send_message():
+    """Send a message."""
 
- 
+def create_user():
+    """Create a user."""
 
-# Create a UDP socket at client side
+def fetch_users():
+    """Fetch a list of online users."""
 
-UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+def connect_to_server():
+    """Connect to the server."""
 
- 
+def disconnect_from_server():
+    """Disconnect from the server."""
 
-# Send to server using created UDP socket
+def get_read_receipt():
+    """Get read receipt for specific message."""
 
-UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+def verify_message():
+    """Verify that messages are correctly received. (error detection)"""
 
- 
+def confirm_message_received():
+    """Confirm that message is received. (loss detection)"""
 
-msgFromServer = UDPClientSocket.recvfrom(bufferSize)
+def setup():
+    """Setup sockets and establish a connection."""
+    create_sockets(False)
+    time.sleep(1)
 
- 
 
-msg = "Message from Server {}".format(msgFromServer[0])
+def main():
+    print_message("Starting Client")
+    setup()
 
-print(msg)
+
+if __name__ == "__main__":
+    main()
