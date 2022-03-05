@@ -66,6 +66,7 @@ def send(bytes_to_send, address: str, port: int):
 
     server_address_port = (address, port)
     send_socket.sendto(bytes_to_send, server_address_port)
+    print_message("TO: ('" + address + "', " + str(port) + ")")
 
 
 def listen():
@@ -99,6 +100,7 @@ def q_listener():
         gram.payload = datagram[0]
         gram.source_address = datagram[1]
         recv_q.put(gram)
+        print_message("FROM: " + str(datagram[1]))
 
 def process_send_recv():
     """Creates new thread to sending and listening for messages."""

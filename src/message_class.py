@@ -14,5 +14,5 @@ class Message:
     def set_body(self, body):
         self.body = body
 
-    def to_string(self) -> str:
+    def __str__(self):
         return self.body

@@ -44,9 +44,10 @@ def read_text_message():
 
 def send_text_message(body:str):
     """Send a text message."""
-    message = message_class.Message(body)
+    message = message_class.Message()
+    message.set_body(body)
     gram = Gram()
-    gram.payload = message.to_string().encode()
+    gram.payload = str(message).encode()
     gram.destination_address = transmission_util.server_public_address
     gram.destination_port = transmission_util.server_recv_port
     send_q.put(gram)
@@ -60,6 +61,7 @@ def setup():
 def main():
     print_message("Starting Client")
     setup()
+    send_text_message("Hellooooooo!")
 
 
 if __name__ == "__main__":
