@@ -1,4 +1,4 @@
-from src.shared.log_util import print_message
+from log_util import print_message
 import queue
 
 send_q = queue.Queue()

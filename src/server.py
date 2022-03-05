@@ -1,7 +1,7 @@
 
-from src.shared.log_util import print_message
-from src.shared.transmission_util import create_sockets
-from src.shared.queue_util import recv_q
+from log_util import print_message
+from transmission_util import create_sockets
+from queue_util import recv_q
 import time
 
 

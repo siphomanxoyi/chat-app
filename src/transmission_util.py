@@ -6,9 +6,9 @@
 import socket
 import time
 from threading import Thread
-from src.shared.log_util import print_message
-from src.shared.queue_util import recv_q
-from src.shared.queue_util import send_q
+from log_util import print_message
+from queue_util import recv_q
+from queue_util import send_q
 
 buffer_size = 1024
 send_socket = None
