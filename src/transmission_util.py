@@ -28,7 +28,7 @@ def create_udp_send_socket(is_server: bool):
 
     if is_server:
         print_message("Created UDP send socket on SERVER.")
-        send_socket.bind((server_local_address, server_send_port))
+        send_socket.bind(('', server_send_port))
     else:
         print_message("Created UDP send socket on CLIENT.")
         send_socket.bind(('', 0))
@@ -43,7 +43,7 @@ def create_udp_recv_socket(is_server: bool):
 
     if is_server:
         print_message("Created UDP receive socket on SERVER.")
-        recv_socket.bind((server_local_address, server_recv_port))
+        recv_socket.bind(('', server_recv_port))
     else:
         print_message("Created UDP receive socket on CLIENT.")
         recv_socket.bind(('', 0))
@@ -81,6 +81,8 @@ def listen():
 
 
 def q_sender():
+    """ Sends datagrams."""
+
     print_message("Send Queue Active.")
     while (True):
         gram = send_q.get(block=True)
@@ -88,11 +90,16 @@ def q_sender():
 
 
 def q_listener():
+    """ Receives datagrams."""
+    from gram_class import Gram
+
     print_message("Listen Queue Active.")
     while (True):
-        recv_q.put(listen())
-        ###################### listen() returns a pair of (bytes, address). turn this into a Gram and put on recv_q
-
+        datagram = listen()
+        gram = Gram()
+        gram.payload = datagram[0]
+        gram.source_address = datagram[1]
+        recv_q.put(gram)
 
 def process_send_recv():
     """Creates new thread to sending and listening for messages."""
