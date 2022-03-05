@@ -4,7 +4,6 @@
 # 	2. send (bytes_to_send, address: str, port: int) : Send bytes to recipient address and specified port.
 
 import socket
-import time
 from threading import Thread
 from log_util import print_message
 from queue_util import recv_q
@@ -14,7 +13,7 @@ buffer_size = 1024
 send_socket = None
 recv_socket = None
 server_local_address = "127.0.0.1"
-server_public_address = "192.143.121.98"
+server_public_address = "127.0.0.1"
 server_send_port = 5678
 server_recv_port = 8765
 
