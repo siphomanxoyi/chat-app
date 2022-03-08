@@ -1,4 +1,5 @@
 # Class for Messages.
+from uuid import uuid1
 from gram_class import Gram
 class Message:
     # Gram 'headers' for protocol
@@ -26,7 +27,8 @@ class Message:
     def __str__(self):
         return self.body
 
-    def create_message(self, body, type):
+    def create_message(self, body, type, source, destination):
         self.body = body
         self.type = type
+        self.id = str(uuid1())
         
