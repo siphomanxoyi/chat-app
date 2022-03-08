@@ -1,40 +1,23 @@
 from log_util import print_message
-from queue_util import recv_q
-from queue_util import send_q
+
 from message_class import Message
-from gram_class import Gram
-import transmission_util
+
 
 
 def create_blank_message(source_user: str):
     """Create a Message object."""
     return Message(source_user=source_user)
 
+def create_ping_message(source_user: str, target_user: str):
+    """Create a Message object with action = PING."""
+    return Message(source_user=source_user, target_user=target_user, action=Message.PING)
 
-def send_message(message: Message):
-    """Send message to specified user."""
-    gram = Gram()
-    address = find_destination_address(message)
-    gram.destination_address = address[0]
-    gram.destination_port = address[1]
-    gram.payload = repr(message).encode()
-    send_q.put(gram)
-
-
-def get_message():
-    """Return a message from the queue."""
-
-
-def find_destination_address(message: Message):
-    """ Returns a tuple of the appropriate destination address and port for this message."""
-    if message.target_user.upper() == "SERVER".upper():
-        return (transmission_util.server_public_address, transmission_util.server_recv_port)
-
-    # if it's to a user there needs to be a lookup of users addreses
+def create_ack_message(message: Message):
+    """Create a Message object with action = ACK."""
+    return Message(target_user=message.source_user, action=Message.ACK, body=message.message_id)
 
 def main():
     print_message("Message Util")
-    print(repr(create_blank_message("keeran")))
 
 
 if __name__ == "__main__":
