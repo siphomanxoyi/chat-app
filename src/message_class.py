@@ -13,6 +13,8 @@ class Message:
         self.ack = False
         self.type = 0
         self.id = ''
+        self.source = None
+        self.destination = None
 
     def unpack_from_gram(self, gram: Gram):
         payload = gram.payload.decode()
@@ -31,4 +33,6 @@ class Message:
         self.body = body
         self.type = type
         self.id = str(uuid1())
+        self.source = source
+        self.destination = destination  
         
