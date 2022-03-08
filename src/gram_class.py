@@ -1,9 +1,9 @@
 # Class that encapsulates message to be sent
 
 class Gram:
-    def __init__(self):
-        self.destination_address = None
-        self.destination_port = None
-        self.source_address = None
-        self.source_port = None
-        self.payload = None
+    def __init__(self, source_address="", source_port=0, destination_address="", destination_port=0, payload="".encode()):
+        self.destination_address = destination_address
+        self.destination_port = destination_port
+        self.source_address = source_address
+        self.source_port = source_port
+        self.payload = payload
