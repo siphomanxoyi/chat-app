@@ -76,7 +76,6 @@ def main():
     setup()
     username = "keeran"
     ping_server()
-    protocol_util.receive_message()
 
 
 if __name__ == "__main__":

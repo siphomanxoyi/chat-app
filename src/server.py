@@ -18,7 +18,6 @@ def main():
 
     print_message("Starting Server")
     setup()
-    protocol_util.receive_message()
 
 
 if __name__ == "__main__":
