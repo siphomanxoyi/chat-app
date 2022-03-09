@@ -3,10 +3,13 @@ import tkinter as tk
 from tkinter import *
 #Importing datetime for message timing
 from datetime import datetime
+#Importing commands from client.py and server.py to enable sending and receiving messages
+from client import send_text_message, setup
+from server import get_message
 
 #Main tk display with specific window size
 root = Tk()
-root.geometry('500x350')
+root.geometry('500x600')
 
 #Messages frame creation and display
 messFrame = tk.Frame(root, bg="white")
@@ -15,45 +18,53 @@ messFrame.place(relwidth=0.8, relheight=0.6, relx=0.1, rely=0.05)
 menuFrame = tk.Frame(root, bg="white")
 menuFrame.place(relwidth=0.8, relheight=0.2, relx=0.1, rely=0.7)
 
+
+#Scrollbar for message frame
+v = Scrollbar(messFrame)
+v.pack(side=RIGHT, fill=Y)
+#Text box to hold messages
+tex = Text(messFrame, width=480, height=580, wrap=WORD, yscrollcommand=v.set, fg="black")
+v.config(command=tex.yview) #Final scrollbar configuration
+tex.tag_config("rec", background="lightblue") #Text box message colors' control
+tex.tag_config("sent", background="lightgreen", justify="right")
+
 #Function to return current date and time
 def dati():
     datiFull = datetime.now()
     datiForm = datiFull.strftime("%d/%m/%Y %H:%M:%S")
     return datiForm
 
-#Recieved message label creation and display
-def displayMessage(sender, rMess):
+#Recieved message display
 
-    whoSent = Label(messFrame, text=sender)
-    receivedMessage = Label(messFrame, text=rMess, fg="white", bg="lightblue", wraplength=260)
-    timeRec = Label(messFrame, text=dati())
-    space = Label(messFrame, text="                   ", bg="white")
-    whoSent.pack()
-    receivedMessage.pack()
-    timeRec.pack()
-    space.pack()
+def displayMessage(rMess):
+    tex.insert("end", dati() + " | " + rMess + "\n", "rec")
+    tex.pack(side=TOP, fill=X)
 
 #Test example function call for received message
-displayMessage("Them","This is a pretty long message. This is a pretty long message. This is a pretty long message. This is a pretty long message.")
-
-#Function to display a sent message to the screen
-def sendMessage():
-    sentMessage = Label(messFrame, text=e.get(), fg="white", bg="lightgreen", wraplength=260)
-    timeSent = Label(messFrame, text=dati())
-    space = Label(messFrame, text="                   ", bg="white")
-    sentMessage.pack()
-    timeSent.pack()
-    space.pack()
+displayMessage("This is a pretty long message. This is a pretty long message. This is a pretty long message. This is a pretty long message.")
 
 #Message input field
 e = Entry(menuFrame)
 e.pack()
 
+#Function to display a sent message to the screen
+def sendMessage():
+    setup()
+    send_text_message(e.get()) #Sending message to server
+    tex.insert("end", dati() + " | " + e.get() + "\n", "sent") #Displaying sent message to screen
+    tex.pack(side=TOP, fill=X)
+    e.delete(0,END) #Clearing input field
+    e.pack()
+
 #Send button functionality
 def send():
-    alertBox['text']=""
-    sendMessage()
-    alertBox['text']="Message sent successfully."
+    sendMessage() #Sendign message
+    alert("Message sent successfully.")
+    
+
+def alert(message):
+    alertBox['text']="" #Clearing alert label
+    alertBox['text']=message #Showing message status alert
     alertBox.pack()
 
 #Send button creation and display
