@@ -56,17 +56,16 @@ def create_sockets(is_server: bool):
     process_send_recv()
 
 
-def send(bytes_to_send, address: str, port: int):
-    """Send to recipient address at specified port."""
+def send(bytes_to_send, address):
+    """Send to recipient address."""
 
     global send_socket
 
-    if send_socket == None:
+    if send_socket is None:
         raise Exception("Socket has not been created.")
 
-    server_address_port = (address, port)
-    send_socket.sendto(bytes_to_send, server_address_port)
-    print_message("TO: ('" + address + "', " + str(port) + ")")
+    send_socket.sendto(bytes_to_send, address)
+    print_message("TO: " + str(address))
 
 
 def listen():
@@ -74,7 +73,7 @@ def listen():
 
     global recv_socket
 
-    if recv_socket == None:
+    if recv_socket is None:
         raise Exception("Socket has not been created.")
 
     return recv_socket.recvfrom(buffer_size)
@@ -84,9 +83,9 @@ def q_sender():
     """ Sends datagrams."""
 
     print_message("Send Queue Active.")
-    while (True):
+    while True:
         gram = send_q.get(block=True)
-        send(gram.payload, gram.destination_address, gram.destination_port)
+        send(gram.payload, gram.destination_address)
 
 
 def q_listener():
@@ -94,13 +93,14 @@ def q_listener():
     from gram_class import Gram
 
     print_message("Listen Queue Active.")
-    while (True):
+    while True:
         datagram = listen()
         gram = Gram()
         gram.payload = datagram[0]
         gram.source_address = datagram[1]
         recv_q.put(gram)
         print_message("FROM: " + str(datagram[1]))
+
 
 def process_send_recv():
     """Creates new thread to sending and listening for messages."""

@@ -1,10 +1,11 @@
 
 from log_util import print_message
 from transmission_util import create_sockets
-from queue_util import recv_q
-from queue_util import send_q
+import protocol_util
 
 import time
+
+username = "SERVER"
 
 def setup():
     """Setup sockets and establish a connection."""
@@ -13,9 +14,11 @@ def setup():
 
 
 def main():
+    global username
+
     print_message("Starting Server")
     setup()
-    print_message(str(get_message()))
+    protocol_util.receive_message()
 
 
 if __name__ == "__main__":

@@ -8,32 +8,52 @@ from message_class import Message
 
 import address_book_util
 import message_util
-def process_message (message: Message):
-    """ Process messages."""
+
+
+def process_message_in(message: Message):
+    """ Process incoming messages."""
+
+    print_message(repr(message))
+    if message.action == Message.BLANK:
+        return message
+    elif message.action == Message.ACK:
+        return message
+    elif message.action == Message.PING:
+        ack = message_util.create_ack_message(message)
+        send_message(ack)
+        return message
+
+
+def process_message_out(message: Message):
+    """ Process outgoing messages."""
 
     print_message(repr(message))
     if message.action == Message.BLANK:
         return None
     elif message.action == Message.PING:
-        ack = message_util.create_ack_message(message)
-        send_message(ack)
+        send_message(message)
+
 
 def send_message(message: Message):
     """Send message."""
 
     gram = Gram()
     address = find_destination_address(message)
-    gram.destination_address = address[0]
-    gram.destination_port = address[1]
+    gram.destination_address = address
     gram.payload = repr(message).encode()
     send_q.put(gram)
 
 
 def receive_message():
     """Return a message from the queue."""
-    gram = recv_q.get()
+    gram = recv_q.get(block=True)
     message = eval(gram.payload.decode())
-    return message
+
+    if message.target_user.upper() == "SERVER":
+        address_book_util.add_to_address_book(message.source_user, gram.source_address)
+
+    process_message_in(message)
+
 
 def find_destination_address(message: Message):
     """ Returns a tuple of the appropriate destination address and port for this message."""
