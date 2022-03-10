@@ -11,6 +11,7 @@ import os
 from address_book_util import address_book
 
 tempUser = "Default"
+tempChatUser = "Server"
 
 def newUser(user):
     global tempUser
@@ -137,6 +138,8 @@ class online(tk.Frame):
             elif(onlineUsers.search(">>" + chosen, "0.0") == ""):
                 alert("Please pick a valid online user.")
             else:
+                global tempChatUser
+                tempChatUser = chosen
                 open_messaging()
 
         # clears users list when refreshing

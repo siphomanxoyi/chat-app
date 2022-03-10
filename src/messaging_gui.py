@@ -1,12 +1,23 @@
 #Importing tkinter GUI library
 import tkinter as tk
 from tkinter import *
+#Importing threading features to allow constant checking for new messages
+import threading
 #Importing client/server file methods
 import client
+
 from log_util import dated_message
 from address_book_util import add_to_address_book
 from ip_util import ip
+from message_util import create_ping_message
+from message_util import create_connect_message
+from protocol_util import process_message_out
+from protocol_util import process_message_in
+from protocol_util import send_message
+from protocol_util import receive_message
+
 from home_gui import tempUser
+from home_gui import tempChatUser
 
 #Main tk display with specific window size
 root = Tk()
@@ -42,13 +53,33 @@ tex.tag_config("sent", background="lightgreen", justify="right")
 e = Entry(menuFrame)
 e.pack()
 
+#Function to constantly check for new incoming messages
+def checkForNew():
+    while True:
+        recMess = receive_message()
+        if recMess != "":
+            #Received message display
+            tex.insert("end", dated_message(recMess) + "\n", "sent") #Displaying received message to screen
+            tex.pack(side=TOP, fill=X)
+
+#function to connect to other client and call checkForNew
+def connect():
+    connectionMessage = create_connect_message(tempUser, tempChatUser)
+    process_message_out(connectionMessage)
+    send_message(connectionMessage)
+    checkingThread = threading.Thread(target=checkForNew)
+    checkingThread.start()
+
 #Function to display a sent message to the screen
-def send_message():
+def send_a_message():
     messBody = e.get()
     if(messBody==""):
         alert("Please input a message.")
     else:
-        #client.send_text_message(messBody)
+        #Sending message from client
+        newMessage = create_ping_message(tempUser, tempChatUser)
+        process_message_out(newMessage)
+        send_message(newMessage)
         #Sent message display
         tex.insert("end", dated_message(messBody) + "\n", "sent") #Displaying sent message to screen
         tex.pack(side=TOP, fill=X)
@@ -62,7 +93,7 @@ def alert(message):
     alertBox.pack()
 
 #Send button creation and display
-sendButton = Button(menuFrame, text="Send", fg="white", bg="green", command=send_message)
+sendButton = Button(menuFrame, text="Send", fg="white", bg="green", command=send_a_message)
 sendButton.pack()
 
 #Program feedback will be shown in this label
@@ -74,5 +105,6 @@ def start():
     client.username = tempUser
     client.main()
     add_to_address_book(tempUser, ip)
+    connect()
     #Run command
     root.mainloop()
