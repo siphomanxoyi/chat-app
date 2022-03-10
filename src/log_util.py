@@ -2,6 +2,8 @@
 
 from datetime import datetime
 
-
 def print_message(message):
     print(datetime.today().strftime("%Y-%m-%d %H:%M:%S"), " | ", message)
+
+def dated_message(message):
+    return(datetime.today().strftime("%Y-%m-%d %H:%M:%S") + " | " + message)
