@@ -1,3 +1,5 @@
+# called by driverM to have a chatroom for a client-client or client-server chat
+
 #Importing tkinter GUI library
 import tkinter as tk
 from tkinter import *
@@ -11,11 +13,13 @@ from address_book_util import add_to_address_book
 from ip_util import ip
 from message_util import create_ping_message
 from message_util import create_connect_message
+from message_util import create_disconnect_message
 from protocol_util import process_message_out
 from protocol_util import process_message_in
 from protocol_util import send_message
 from protocol_util import receive_message
 
+#Importing variables for client usernames
 from home_gui import tempUser
 from home_gui import tempChatUser
 
@@ -72,6 +76,7 @@ def connect():
 
 #Function to display a sent message to the screen
 def send_a_message():
+    global e
     messBody = e.get()
     if(messBody==""):
         alert("Please input a message.")
@@ -88,6 +93,7 @@ def send_a_message():
 
 #Function to display an alert
 def alert(message):
+    global alertBox
     alertBox['text']="" #Clearing alert label
     alertBox['text']=message #Showing message status alert
     alertBox.pack()
@@ -96,15 +102,26 @@ def alert(message):
 sendButton = Button(menuFrame, text="Send", fg="white", bg="green", command=send_a_message)
 sendButton.pack()
 
+#Disconnecting and ending the session
+def log_out():
+    #disCon = create_disconnect_message(tempUser,tempChatUser)
+    global root
+    root.destroy()
+
+#Send button creation and display
+logoutButton = Button(menuFrame, text="Log Out", fg="white", bg="green", command=log_out)
+logoutButton.pack()
+
 #Program feedback will be shown in this label
 alertBox = Label(menuFrame, text="", fg="white", bg="grey")
 
-
-def start():
+#Main functionality function, starts the program
+def driveM():
     #Create a client
     client.username = tempUser
     client.main()
     add_to_address_book(tempUser, ip)
     connect()
     #Run command
+    global root
     root.mainloop()
