@@ -33,10 +33,16 @@ def create_udp_send_socket(is_server: bool):
         send_socket.bind((server_local_address, server_send_port))
     else:
         print_message("Created UDP send socket on CLIENT.")
-        try:
-            send_socket.bind(('', server_send_port + 1))
-        except:
-            send_socket.bind(('', server_send_port + 2))
+
+        bound = False
+        i = 1
+        while not bound:
+            try:
+                send_socket.bind(('', server_send_port + i))
+                bound = True
+            except:
+                i += 1
+                pass
 
 
 def create_udp_recv_socket(is_server: bool):
@@ -51,10 +57,7 @@ def create_udp_recv_socket(is_server: bool):
         recv_socket.bind((server_local_address, server_recv_port))
     else:
         print_message("Created UDP receive socket on CLIENT.")
-        try:
-            recv_socket.bind(('', server_send_port + 2))
-        except:
-            recv_socket.bind(('', server_send_port + 3))
+        recv_socket.bind(('', send_socket.getsockname()[1] + 1))
 
 
 def create_sockets(is_server: bool):
@@ -114,7 +117,9 @@ def q_listener():
         # Unpack gram and add to message inbox
         message = eval(gram.payload.decode())
         if message.action == Message.CONNECT:
-            address_book_util.add_to_address_book(message.source_user, (gram.source_address[0], gram.source_address[1]+1), gram.source_address)
+            address_book_util.add_to_address_book(message.source_user,
+                                                  (gram.source_address[0], gram.source_address[1] + 1),
+                                                  gram.source_address)
         message_inbox.put(message)
 
 
