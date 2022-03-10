@@ -1,8 +1,6 @@
 #Importing tkinter GUI library
 import tkinter as tk
 from tkinter import *
-#Importing log_util for message timing
-from log_util import dated_message
 
 #Main tk display with specific window size
 root = Tk()
@@ -25,13 +23,14 @@ v.config(command=tex.yview) #Final scrollbar configuration
 tex.tag_config("rec", background="lightblue") #Text box message colors' control
 tex.tag_config("sent", background="lightgreen", justify="right")
 
-#Recieved message display
-def display_message(rMess):
-    tex.insert("end", (dated_message(rMess) + "\n"), "rec")
-    tex.pack(side=TOP, fill=X)
-
-#Test example function call for received message
-display_message("This is a pretty long message. This is a pretty long message. This is a pretty long message. This is a pretty long message.")
+#Testing receiving messages display:
+##Recieved message display
+#def display_message(rMess):
+#    tex.insert("end", (dated_message(rMess) + "\n"), "rec")
+#    tex.pack(side=TOP, fill=X)
+#
+##Test example function call for received message
+#display_message("This is a pretty long message. This is a pretty long message. This is a pretty long message. This is a pretty long message.")
 
 #Message input field
 e = Entry(menuFrame)
@@ -42,8 +41,9 @@ def send_message():
     if(e.get()==""):
         alert("Please input a message.")
     else:
-        tex.insert("end", dated_message(e.get()) + "\n", "sent") #Displaying sent message to screen
-        tex.pack(side=TOP, fill=X)
+        #Testing sent messages display:
+        #tex.insert("end", dated_message(e.get()) + "\n", "sent") #Displaying sent message to screen
+        #tex.pack(side=TOP, fill=X)
         e.delete(0,END) #Clearing input field
         e.pack()
 
