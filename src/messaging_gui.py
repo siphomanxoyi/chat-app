@@ -1,6 +1,12 @@
 #Importing tkinter GUI library
 import tkinter as tk
 from tkinter import *
+#Importing client/server file methods
+import client
+from log_util import dated_message
+from address_book_util import add_to_address_book
+from ip_util import ip
+from home_gui import tempUser
 
 #Main tk display with specific window size
 root = Tk()
@@ -38,12 +44,14 @@ e.pack()
 
 #Function to display a sent message to the screen
 def send_message():
-    if(e.get()==""):
+    messBody = e.get()
+    if(messBody==""):
         alert("Please input a message.")
     else:
-        #Testing sent messages display:
-        #tex.insert("end", dated_message(e.get()) + "\n", "sent") #Displaying sent message to screen
-        #tex.pack(side=TOP, fill=X)
+        #client.send_text_message(messBody)
+        #Sent message display
+        tex.insert("end", dated_message(messBody) + "\n", "sent") #Displaying sent message to screen
+        tex.pack(side=TOP, fill=X)
         e.delete(0,END) #Clearing input field
         e.pack()
 
@@ -60,5 +68,11 @@ sendButton.pack()
 #Program feedback will be shown in this label
 alertBox = Label(menuFrame, text="", fg="white", bg="grey")
 
-#Run command
-root.mainloop()
+
+def start():
+    #Create a client
+    client.username = tempUser
+    client.main()
+    add_to_address_book(tempUser, ip)
+    #Run command
+    root.mainloop()

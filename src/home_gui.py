@@ -7,6 +7,14 @@ from tkinter import ttk
 from tkinter import *
 #impoting os to be able to open another python file
 import os
+#Importing client/server file methods
+from address_book_util import address_book
+
+tempUser = "Default"
+
+def newUser(user):
+    global tempUser
+    tempUser = user
 
 #Multi page setup
 class home(tk.Tk):
@@ -74,14 +82,13 @@ class signup(tk.Frame):
         # name input field
         ent = Entry(self)
         ent.pack()
-        # setting username to default
-        username = "default"
 
         # function to add a new client to address book
         def new_client():
-            username = ent.get()
-            if username != "":
-                labelConf['text'] = ("Welcome " + username)
+            usernameStored = ent.get()
+            if usernameStored != "":
+                labelConf['text'] = ("Welcome " + usernameStored)
+                newUser(usernameStored)
                 ent.delete(0,END) #Clearing input field
                 ent.pack()
                 show_button()
@@ -117,12 +124,10 @@ class online(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        # test list of address books
-        tempAddresses = ["James", "Jessica", "John", "LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"]
-
         # opens messaging_gui
         def open_messaging():
-            os.system("python messaging_gui.py")
+            import messaging_gui
+            messaging_gui.start()
 
         # opens messaging_gui for chosen user communication
         def choose_peer():
@@ -154,7 +159,7 @@ class online(tk.Frame):
         def get_online():
             onlineUsers['state'] = NORMAL
             clear()
-            for client in tempAddresses:
+            for client in address_book:
                 onlineUsers.insert("end",">>" + client + "\n")
             onlineUsers['state'] = DISABLED
 
@@ -171,6 +176,8 @@ class online(tk.Frame):
         messButton = ttk.Button(self, text = "Connect", command=choose_peer)
         messButton.pack(side=BOTTOM)
 
-# driver Code
-app = home()
-app.mainloop()
+
+def drive():
+    # driver Code
+    app = home()
+    app.mainloop()
