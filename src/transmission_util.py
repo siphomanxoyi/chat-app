@@ -8,6 +8,7 @@ from threading import Thread
 from log_util import print_message
 from queue_util import recv_q
 from queue_util import send_q
+
 # from src.address_book_util import add_to_address_book
 # from protocol_util import *
 
@@ -32,7 +33,10 @@ def create_udp_send_socket(is_server: bool):
         send_socket.bind((server_local_address, server_send_port))
     else:
         print_message("Created UDP send socket on CLIENT.")
-        send_socket.bind(('', 0))
+        try:
+            send_socket.bind(('', server_send_port + 1))
+        except:
+            send_socket.bind(('', server_send_port + 2))
 
 
 def create_udp_recv_socket(is_server: bool):
@@ -47,7 +51,10 @@ def create_udp_recv_socket(is_server: bool):
         recv_socket.bind((server_local_address, server_recv_port))
     else:
         print_message("Created UDP receive socket on CLIENT.")
-        recv_socket.bind(('', 0))
+        try:
+            recv_socket.bind(('', server_send_port + 2))
+        except:
+            recv_socket.bind(('', server_send_port + 3))
 
 
 def create_sockets(is_server: bool):
@@ -93,6 +100,9 @@ def q_sender():
 def q_listener():
     """ Receives datagrams."""
     from gram_class import Gram
+    from queue_util import message_inbox
+    from message_util import Message
+    import address_book_util
 
     print_message("Listen Queue Active.")
     while True:
@@ -100,34 +110,13 @@ def q_listener():
         gram = Gram()
         gram.payload = datagram[0]
         gram.source_address = datagram[1]
-        recv_q.put(gram)
         print_message("FROM: " + str(datagram[1]))
+        # Unpack gram and add to message inbox
+        message = eval(gram.payload.decode())
+        if message.action == Message.CONNECT:
+            address_book_util.add_to_address_book(message.source_user, (gram.source_address[0], gram.source_address[1]+1), gram.source_address)
+        message_inbox.put(message)
 
-def q_process():
-    """Processes incoming messages"""
-    from message_class import Message
-    from message_util import create_ack_message
-    from protocol_util import send_message
-    from address_book_util import address_book
-    from address_book_util import add_to_address_book
-    
-    while True:
-        gram = recv_q.get()
-        message = eval(gram.payload.decode()) # Remember to go over this again because q.get() removes messages from queue
-        print_message(repr(message))
-        if message.action == Message.BLANK:
-            return message
-        elif message.action == Message.ACK:
-            return message
-        elif message.action == Message.PING:
-            ack = create_ack_message(message)
-            if address_book.get(message.source_user.upper())==None:
-                add_to_address_book(message.source_user, gram.source_address)
-            print_message(ack)
-            send_message(ack)
-            print_message("Reached end of message process")
-            return message
-    
 
 def process_send_recv():
     """Creates new thread to sending and listening for messages."""
@@ -136,8 +125,6 @@ def process_send_recv():
     thread_recv.start()
     thread_send = Thread(target=q_sender, args=())
     thread_send.start()
-    thread_process = Thread(target=q_process, args=())
-    thread_process.start()
 
 
 def main():

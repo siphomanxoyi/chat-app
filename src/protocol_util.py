@@ -9,7 +9,6 @@ from message_class import Message
 import address_book_util
 import message_util
 
-
 def process_message_in(message: Message):
     """ Process incoming messages."""
 
@@ -58,7 +57,7 @@ def receive_message():
 def find_destination_address(message: Message):
     """ Returns a tuple of the appropriate destination address and port for this message."""
 
-    return address_book_util.address_book.get(message.target_user.upper())
+    return address_book_util.address_book.get(message.target_user.upper())[0]
 
 
 def main():

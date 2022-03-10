@@ -3,7 +3,7 @@ import queue
 
 send_q = queue.Queue()
 recv_q = queue.Queue()
-
+message_inbox = queue.Queue()
 
 
 def main():

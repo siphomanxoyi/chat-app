@@ -1,6 +1,7 @@
 from log_util import print_message
 from queue_util import send_q
 from queue_util import recv_q
+from queue_util import message_inbox
 from gram_class import Gram
 
 import message_class
@@ -10,6 +11,33 @@ import protocol_util
 import message_util
 
 username = ""
+server_username = "SERVER"
+connected = False
+
+
+def connect_to_server():
+    """Connect to the server."""
+    global username, connected
+
+    username = "keeran"
+    handshake_state = 0
+
+    while not connected:
+        if handshake_state == 0:  # SYN1
+            syn = message_util.create_connect_message(username, server_username)
+            protocol_util.send_message(syn)
+            handshake_state += 1
+        elif handshake_state == 1:  # SYN2-ACK1
+            syn_ack = message_inbox.get()
+            if message_util.is_connect_ack_message(syn_ack):
+                handshake_state += 1
+        elif handshake_state == 2:  # SYN3-ACK2
+            ack = message_util.create_connect_ack_message(syn_ack)
+            protocol_util.send_message(ack)
+            handshake_state += 1
+        elif handshake_state == 3:
+            connected = True
+    print_message("Client-Server Handshake Complete.")
 
 
 def ping_server():
@@ -22,10 +50,6 @@ def create_user():
 
 def fetch_users():
     """Fetch a list of online users."""
-
-
-def connect_to_server():
-    """Connect to the server."""
 
 
 def disconnect_from_server():
@@ -70,12 +94,9 @@ def setup():
 
 
 def main():
-    global username
-
     print_message("Starting Client")
     setup()
-    username = "keeran"
-    ping_server()
+    connect_to_server()
 
 
 if __name__ == "__main__":

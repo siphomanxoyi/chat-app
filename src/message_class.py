@@ -8,6 +8,7 @@ class Message:
     BLANK = 0
     ACK = 1
     CONNECT = 2
+    CONNECT_ACK = 5
     DISCONNECT = 3
     PING = 4
 
