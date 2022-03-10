@@ -1,23 +1,24 @@
-#Thanks to https://www.geeksforgeeks.org/tkinter-application-to-switch-between-different-page-frames/
-#  for showing how to move between pages.
+# user name choice and choosing who to chat with happen in this GUI
+# thanks to https://www.geeksforgeeks.org/tkinter-application-to-switch-between-different-page-frames/
+#  for showing how to move between pages
 
 # importing GUI elements
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
-#impoting os to be able to open another python file
-import os
-#Importing client/server file methods
+# importing client/server file methods
 from address_book_util import address_book
 
+# default host client and contacted client or server names
 tempUser = "Default"
 tempChatUser = "Server"
 
+# a method to set tempUser to a new username
 def newUser(user):
     global tempUser
     tempUser = user
 
-#Multi page setup
+# multi page setup
 class home(tk.Tk):
      
     # __init__ function for class home
@@ -127,8 +128,7 @@ class online(tk.Frame):
 
         # opens messaging_gui
         def open_messaging():
-            import messaging_gui
-            messaging_gui.start()
+            exec(open("driverM.py").read())
 
         # opens messaging_gui for chosen user communication
         def choose_peer():
@@ -141,6 +141,7 @@ class online(tk.Frame):
                 global tempChatUser
                 tempChatUser = chosen
                 open_messaging()
+
 
         # clears users list when refreshing
         def clear(): 
