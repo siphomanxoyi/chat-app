@@ -8,6 +8,7 @@ from tkinter import *
 #impoting os to be able to open another python file
 import os
 
+#Multi page setup
 class home(tk.Tk):
      
     # __init__ function for class home
@@ -42,19 +43,30 @@ class home(tk.Tk):
   
         # the frame to show when the program opens
         self.show_frame(signup)
+
+        # program feedback will be shown in this label
+        global alertBox
+        alertBox = Label(self, text="", fg="white", bg="grey")
+        alertBox.pack(side=BOTTOM)
   
     # to display the current frame passed as
     # parameter
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
+
+# function to display an alert
+def alert(message):
+    alertBox['text']="" #Clearing alert label
+    alertBox['text']=message #Showing message status alert
+    alertBox.pack()
   
 # first window frame signup
   
 class signup(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-         
+
         # heading label
         labelChoo = ttk.Label(self, text ="Choose a nickname:")
         labelChoo.pack()
@@ -98,16 +110,6 @@ class signup(tk.Frame):
             ent.pack_forget()
             buttonSign.pack_forget()
 
-        # program feedback will be shown in this label
-        alertBox = Label(self, text="", fg="white", bg="grey")
-        alertBox.pack(side=BOTTOM)
-
-        # function to display an alert
-        def alert(message):
-            alertBox['text']="" #Clearing alert label
-            alertBox['text']=message #Showing message status alert
-            alertBox.pack()
-
 # second window frame online
 
 class online(tk.Frame):
@@ -121,12 +123,6 @@ class online(tk.Frame):
         # opens messaging_gui
         def open_messaging():
             os.system("python messaging_gui.py")
-
-        # function to display an alert
-        def alert(message):
-            alertBox['text']="" #Clearing alert label
-            alertBox['text']=message #Showing message status alert
-            alertBox.pack()
 
         # opens messaging_gui for chosen user communication
         def choose_peer():
@@ -165,10 +161,6 @@ class online(tk.Frame):
         # input field for user to choose who to chat with
         chosenUser = Entry(self)
         chosenUser.pack()
-
-        # program feedback will be shown in this label
-        alertBox = Label(self, text="", fg="white", bg="grey")
-        alertBox.pack(side=BOTTOM)
 
         # button to refresh online list
         buttonReturn = ttk.Button(self, text = "Refresh",
