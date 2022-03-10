@@ -1,11 +1,8 @@
 #Importing tkinter GUI library
 import tkinter as tk
 from tkinter import *
-#Importing datetime for message timing
-from datetime import datetime
-#Importing commands from client.py and server.py to enable sending and receiving messages
-from client import send_text_message, setup
-from server import get_message
+#Importing log_util for message timing
+from log_util import dated_message
 
 #Main tk display with specific window size
 root = Tk()
@@ -28,47 +25,36 @@ v.config(command=tex.yview) #Final scrollbar configuration
 tex.tag_config("rec", background="lightblue") #Text box message colors' control
 tex.tag_config("sent", background="lightgreen", justify="right")
 
-#Function to return current date and time
-def dati():
-    datiFull = datetime.now()
-    datiForm = datiFull.strftime("%d/%m/%Y %H:%M:%S")
-    return datiForm
-
 #Recieved message display
-
-def displayMessage(rMess):
-    tex.insert("end", dati() + " | " + rMess + "\n", "rec")
+def display_message(rMess):
+    tex.insert("end", (dated_message(rMess) + "\n"), "rec")
     tex.pack(side=TOP, fill=X)
 
 #Test example function call for received message
-displayMessage("This is a pretty long message. This is a pretty long message. This is a pretty long message. This is a pretty long message.")
+display_message("This is a pretty long message. This is a pretty long message. This is a pretty long message. This is a pretty long message.")
 
 #Message input field
 e = Entry(menuFrame)
 e.pack()
 
 #Function to display a sent message to the screen
-def sendMessage():
-    setup()
-    send_text_message(e.get()) #Sending message to server
-    tex.insert("end", dati() + " | " + e.get() + "\n", "sent") #Displaying sent message to screen
-    tex.pack(side=TOP, fill=X)
-    e.delete(0,END) #Clearing input field
-    e.pack()
+def send_message():
+    if(e.get()==""):
+        alert("Please input a message.")
+    else:
+        tex.insert("end", dated_message(e.get()) + "\n", "sent") #Displaying sent message to screen
+        tex.pack(side=TOP, fill=X)
+        e.delete(0,END) #Clearing input field
+        e.pack()
 
-#Send button functionality
-def send():
-    sendMessage() #Sendign message
-    alert("Message sent successfully.")
-    
-
+#Function to display an alert
 def alert(message):
     alertBox['text']="" #Clearing alert label
     alertBox['text']=message #Showing message status alert
     alertBox.pack()
 
 #Send button creation and display
-sendButton = Button(menuFrame, text="Send", fg="white", bg="green", command=send)
+sendButton = Button(menuFrame, text="Send", fg="white", bg="green", command=send_message)
 sendButton.pack()
 
 #Program feedback will be shown in this label
