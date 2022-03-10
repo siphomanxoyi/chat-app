@@ -8,6 +8,8 @@ from threading import Thread
 from log_util import print_message
 from queue_util import recv_q
 from queue_util import send_q
+# from src.address_book_util import add_to_address_book
+# from protocol_util import *
 
 buffer_size = 1024
 send_socket = None
@@ -101,6 +103,31 @@ def q_listener():
         recv_q.put(gram)
         print_message("FROM: " + str(datagram[1]))
 
+def q_process():
+    """Processes incoming messages"""
+    from message_class import Message
+    from message_util import create_ack_message
+    from protocol_util import send_message
+    from address_book_util import address_book
+    from address_book_util import add_to_address_book
+    
+    while True:
+        gram = recv_q.get()
+        message = eval(gram.payload.decode()) # Remember to go over this again because q.get() removes messages from queue
+        print_message(repr(message))
+        if message.action == Message.BLANK:
+            return message
+        elif message.action == Message.ACK:
+            return message
+        elif message.action == Message.PING:
+            ack = create_ack_message(message)
+            if address_book.get(message.source_user.upper())==None:
+                add_to_address_book(message.source_user, gram.source_address)
+            print_message(ack)
+            send_message(ack)
+            print_message("Reached end of message process")
+            return message
+    
 
 def process_send_recv():
     """Creates new thread to sending and listening for messages."""
@@ -109,6 +136,8 @@ def process_send_recv():
     thread_recv.start()
     thread_send = Thread(target=q_sender, args=())
     thread_send.start()
+    thread_process = Thread(target=q_process, args=())
+    thread_process.start()
 
 
 def main():
