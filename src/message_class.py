@@ -25,8 +25,8 @@ class Message:
         rep = f'Message(action={self.action}, source_user="{self.source_user}", target_user="{self.target_user}", message_id="{self.message_id}", body="{self.body}", hash="{self.hash}")'
         return rep
 
-    def hash64(message):
-        return (base64.b64encode(f'Message(action={message.action}, source_user="{message.source_user}", target_user="{message.target_user}", message_id="{message.message_id}", body="{message.body}")'.encode('ascii'))).decode('ascii')
+    def hash64(self):
+        return (base64.b64encode((repr(self)).encode('ascii'))).decode('ascii')
 
     # def unhash64(message):
     #     base64_message = message.hash64
@@ -36,4 +36,13 @@ class Message:
     #     return uncoded_message
     
     def validate(self):
-        return self.hash64 == self.hash
+        old_hash = self.hash
+        self.hash = ""
+        valid = False
+        self.hash = self.hash64
+        valid = old_hash == self.hash
+        if valid:
+            return valid 
+        else:
+            self.hash = old_hash
+            return False
