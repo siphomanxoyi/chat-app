@@ -61,6 +61,17 @@ def fetch_users():
         return True
     return None
 
+
+def send_text_message(body: str):
+    """Send a text message."""
+    message = message_class.Message()
+    message.set_body(body)
+    gram = Gram()
+    gram.payload = str(message).encode()
+    gram.destination_address = transmission_util.server_public_address
+    gram.destination_port = transmission_util.server_recv_port
+    send_q.put(gram)
+
 def disconnect_from_server():
     """Disconnect from the server."""
 
@@ -76,24 +87,6 @@ def verify_message():
 def confirm_message_received():
     """Confirm that message is received. (loss detection)"""
 
-
-def read_text_message():
-    """Read a text message."""
-    gram = recv_q.get()
-    message = message_class.Message()
-    message.unpack_from_gram(gram)
-    return message.get_body()
-
-
-def send_text_message(body: str):
-    """Send a text message."""
-    message = message_class.Message()
-    message.set_body(body)
-    gram = Gram()
-    gram.payload = str(message).encode()
-    gram.destination_address = transmission_util.server_public_address
-    gram.destination_port = transmission_util.server_recv_port
-    send_q.put(gram)
 
 
 def setup():
