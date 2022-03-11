@@ -48,23 +48,13 @@ tex.tag_config("sent", background="lightgreen", justify="right")
 ##Test example function call for received message
 #display_message("This is a pretty long message. This is a pretty long message. This is a pretty long message. This is a pretty long message.")
 
+#Label to tell you who you are talking to
+cuLabel = Label(root, text = "Chatting to: " + tempChatUser)
+cuLabel.pack()
+
 #Message input field
 e = Entry(menuFrame)
 e.pack()
-
-#Function to constantly check for new incoming messages
-#def checkForNew():
-#    while True:
-#        recMess = receive_message()
-#        if recMess != "":
-#            #Received message display
-#            tex.insert("end", dated_message(recMess) + "\n", "sent") #Displaying received message to screen
-#            tex.pack(side=TOP, fill=X)
-
-#function to connect to other client and call checkForNew
-#def connect():
-#    checkingThread = threading.Thread(target=checkForNew)
-#    checkingThread.start()
 
 #Function to display a sent message to the screen
 def send_a_message():
@@ -108,15 +98,6 @@ alertBox = Label(menuFrame, text="", fg="white", bg="grey")
 
 #Main functionality function, starts the program
 def driveM():
-    #Create a client
-    #client.set_username(tempUser)
-    #client.setup()
-    #if (client.connect_to_server()):
-    #    alert("Connected to server successfully.")
-    #else:
-    #    alert("Failed to connect to server.")
-    #global connect
-    #connect()
     #Run command
     global root
     root.mainloop()
