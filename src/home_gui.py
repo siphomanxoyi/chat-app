@@ -176,7 +176,7 @@ class online(tk.Frame):
             chosen = chosenUser.get()
             if (chosen == ""):
                 alert("Please pick a user.")
-            elif(onlineUsers.search(">>" + chosen, "0.0") == ""):
+            elif(onlineUsers.search(">>" + chosen.upper(), "0.0") == ""):
                 alert("Please pick a valid online user.")
             else:
                 global tempChatUser
