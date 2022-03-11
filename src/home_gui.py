@@ -67,6 +67,7 @@ class home(tk.Tk):
 
 # function to display an alert
 def alert(message):
+    global alertBox
     alertBox['text']="" #Clearing alert label
     alertBox['text']=message #Showing message status alert
     alertBox.pack()
@@ -163,7 +164,7 @@ class online(tk.Frame):
         def get_online():
             onlineUsers['state'] = NORMAL
             clear()
-            for client in address_book:
+            for client in address_book.keys():
                 onlineUsers.insert("end",">>" + client + "\n")
             onlineUsers['state'] = DISABLED
 

@@ -9,15 +9,11 @@ import threading
 import client
 
 from log_util import dated_message
-from address_book_util import add_to_address_book
 from ip_util import ip
 from message_util import create_ping_message
-from message_util import create_connect_message
-from message_util import create_disconnect_message
-from protocol_util import process_message_out
-from protocol_util import process_message_in
+from protocol_util import start
 from protocol_util import send_message
-from protocol_util import receive_message
+from protocol_util import sort_messages_in
 
 #Importing variables for client usernames
 from home_gui import tempUser
@@ -58,21 +54,18 @@ e = Entry(menuFrame)
 e.pack()
 
 #Function to constantly check for new incoming messages
-def checkForNew():
-    while True:
-        recMess = receive_message()
-        if recMess != "":
-            #Received message display
-            tex.insert("end", dated_message(recMess) + "\n", "sent") #Displaying received message to screen
-            tex.pack(side=TOP, fill=X)
+#def checkForNew():
+#    while True:
+#        recMess = receive_message()
+#        if recMess != "":
+#            #Received message display
+#            tex.insert("end", dated_message(recMess) + "\n", "sent") #Displaying received message to screen
+#            tex.pack(side=TOP, fill=X)
 
 #function to connect to other client and call checkForNew
-def connect():
-    connectionMessage = create_connect_message(tempUser, tempChatUser)
-    process_message_out(connectionMessage)
-    send_message(connectionMessage)
-    checkingThread = threading.Thread(target=checkForNew)
-    checkingThread.start()
+#def connect():
+#    checkingThread = threading.Thread(target=checkForNew)
+#    checkingThread.start()
 
 #Function to display a sent message to the screen
 def send_a_message():
@@ -83,7 +76,6 @@ def send_a_message():
     else:
         #Sending message from client
         newMessage = create_ping_message(tempUser, tempChatUser)
-        process_message_out(newMessage)
         send_message(newMessage)
         #Sent message display
         tex.insert("end", dated_message(messBody) + "\n", "sent") #Displaying sent message to screen
@@ -118,10 +110,11 @@ alertBox = Label(menuFrame, text="", fg="white", bg="grey")
 #Main functionality function, starts the program
 def driveM():
     #Create a client
-    client.username = tempUser
+    client.set_username(tempUser)
     client.main()
-    add_to_address_book(tempUser, ip)
-    connect()
+    start()
+    #global connect
+    #connect()
     #Run command
     global root
     root.mainloop()
