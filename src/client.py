@@ -62,15 +62,37 @@ def fetch_users():
     return None
 
 
-def send_text_message(body: str):
-    """Send a text message."""
-    message = message_class.Message()
-    message.set_body(body)
-    gram = Gram()
-    gram.payload = str(message).encode()
-    gram.destination_address = transmission_util.server_public_address
-    gram.destination_port = transmission_util.server_recv_port
-    send_q.put(gram)
+def send_text_message(body: str, target_user: str):
+    """Send a text message to another user."""
+
+    from queue_util import in_acks
+
+    timeout = 5
+    count = 5
+    send_count = 0
+    acked = False
+
+    while not acked:
+        count += 1
+
+        if count > 3:
+            message = message_util.create_text_message(username, target_user, body)
+            protocol_util.send_message(message)
+            count = 0
+            send_count += 1
+        try:
+            ack_message = in_acks.get(timeout=timeout)  # retry after x seconds
+            if ack_message.body == message.message_id:
+                acked = True
+            else:
+                in_acks.put(ack_message)
+                time.sleep(timeout)
+        except:
+            if send_count == 3:
+                return False
+            pass
+    return True  # messaged received by SERVER
+
 
 def disconnect_from_server():
     """Disconnect from the server."""
@@ -88,14 +110,12 @@ def confirm_message_received():
     """Confirm that message is received. (loss detection)"""
 
 
-
 def setup():
     """Setup sockets and establish a connection."""
     transmission_util.create_sockets(False)
     time.sleep(1)
     protocol_util.start()
     time.sleep(1)
-
 
 
 def main():

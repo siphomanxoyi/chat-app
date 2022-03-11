@@ -12,6 +12,7 @@ class Message:
     CONNECT_ACK = 5
     DISCONNECT = 3
     PING = 4
+    TEXT = 6
 
     def __init__(self, action=0, source_user="", target_user="", message_id=str(uuid1()), body="", hash=""):
         self.body = body

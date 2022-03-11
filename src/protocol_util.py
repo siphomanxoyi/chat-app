@@ -16,6 +16,8 @@ def sort_messages_in():
     """ Process incoming messages."""
     from queue_util import in_connect
     from queue_util import in_fetch_users
+    from queue_util import in_acks
+    from queue_util import in_texts
 
     while True:
         message = message_inbox.get()
@@ -29,12 +31,18 @@ def sort_messages_in():
             in_connect.put(message)
         elif message.action == Message.FETCH_USERS:
             in_fetch_users.put(message)
+        elif message.action == Message.ACK:
+            in_acks.put(message)
+        elif message.action == Message.TEXT:
+            in_texts.put(message)
 
 
 def send_message(message: Message):
     """Send message."""
 
     gram = Gram()
+    if message.action == Message.TEXT:
+
     address = find_destination_address(message)
     gram.destination_address = address
     gram.payload = repr(message).encode()

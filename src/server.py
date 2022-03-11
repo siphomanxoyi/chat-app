@@ -35,6 +35,19 @@ def send_address_book():
             protocol_util.send_message(m)
         print_message("Sending list of users to: " + message.source_user.upper())
 
+def route_text_messages():
+    """Routes TEXT messages to recipients."""
+    from queue_util import in_texts
+    import address_book_util
+
+    while True:
+        message = in_texts.get()
+
+        if message.action == Message.TEXT:
+            ack = message_util.create_ack_message(message)
+            protocol_util.send_message(ack)
+
+
 def setup():
     """Setup sockets and establish a connection."""
     create_sockets(True)
@@ -45,6 +58,8 @@ def setup():
     handshaker.start()
     yellow_pages = Thread(target=send_address_book, args=())
     yellow_pages.start()
+    grapevine = Thread(target=route_text_messages, args=())
+    grapevine.start()
 
 
 def main():

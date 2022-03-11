@@ -69,6 +69,12 @@ def is_fetch_users_message(message: Message):
         return True
     return False
 
+
+def create_text_message(source_user: str, target_user: str, recipient="", body: str):
+    """Create a Message object with action = TEXT."""
+    return Message(source_user=source_user, target_user=target_user, action=Message.TEXT, body=body)
+
+
 def main():
     print_message("Message Util")
 
