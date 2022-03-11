@@ -79,7 +79,7 @@ class signup(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         # heading label
-        labelChoo = ttk.Label(self, text ="Choose a nickname:")
+        labelChoo = ttk.Label(self, text ="Choose a  username:")
         labelChoo.pack()
 
         # name input field
@@ -143,7 +143,7 @@ class online(tk.Frame):
             onlineUsers.pack()
 
         # heading label
-        onLabel = ttk.Label(self, text ="Online")
+        onLabel = ttk.Label(self, text ="Online List:")
         onLabel.pack()
 
         # adding a text field to hold online users with a scrollbar
@@ -160,7 +160,7 @@ class online(tk.Frame):
             clear()
             if(client.fetch_users()):
                     for user in address_book_util.address_book:
-                        if(user != tempUser):
+                        if(user != tempUser.upper()):
                             onlineUsers.insert("end",">>" + user + "\n")
                     alert("Fetched online users successfully.")
             else:
