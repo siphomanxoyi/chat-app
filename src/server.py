@@ -11,7 +11,7 @@ username = "SERVER"
 
 
 def client_connections():
-    """Connect to the server."""
+    """Connect client."""
     from queue_util import in_connect
     while True:
         message = in_connect.get()
@@ -20,6 +20,19 @@ def client_connections():
             protocol_util.send_message(message_util.create_connect_ack_message(message))
         elif message.action == Message.CONNECT_ACK:  # Final ack from client
             print_message("Connected to: " + message.source_user.upper())
+
+
+def client_disconnections():
+    """Disconnect client."""
+    from queue_util import in_disconnect
+    import address_book_util
+    while True:
+        message = in_disconnect.get()
+
+        if message.action == Message.DISCONNECT:
+            protocol_util.send_message(message_util.create_disconnect_response_message(message))
+            time.sleep(3)
+            address_book_util.remove_from_address_book(message.source_user)
 
 
 def send_address_book():
@@ -34,6 +47,7 @@ def send_address_book():
             m = message_util.create_fetch_users_message(username, message.source_user, book)
             protocol_util.send_message(m)
         print_message("Sending list of users to: " + message.source_user.upper())
+
 
 def route_text_messages():
     """Routes TEXT messages to recipients."""
@@ -64,6 +78,8 @@ def setup():
     yellow_pages.start()
     grapevine = Thread(target=route_text_messages, args=())
     grapevine.start()
+    closer = Thread(target=client_disconnections, args=())
+    closer.start()
 
 
 def main():

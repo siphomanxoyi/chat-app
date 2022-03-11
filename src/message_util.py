@@ -40,6 +40,16 @@ def is_connect_ack_message(message: Message):
     return False
 
 
+def create_disconnect_message(source_user: str, target_user: str):
+    """Create a Message object with action = DISCONNECT."""
+    return Message(source_user=source_user, target_user=target_user, action=Message.DISCONNECT)
+
+
+def create_disconnect_response_message(messsage: Message):
+    """Create a Message object with action = DISCONNECT."""
+    return Message(source_user=messsage.target_user, target_user=messsage.source_user, action=Message.DISCONNECT)
+
+
 def create_ping_message(source_user: str, target_user: str):
     """Create a Message object with action = PING."""
     return Message(source_user=source_user, target_user=target_user, action=Message.PING)

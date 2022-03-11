@@ -18,6 +18,7 @@ def sort_messages_in():
     from queue_util import in_fetch_users
     from queue_util import in_acks
     from queue_util import in_texts
+    from queue_util import in_disconnect
 
     while True:
         message = message_inbox.get()
@@ -35,6 +36,8 @@ def sort_messages_in():
             in_acks.put(message)
         elif message.action == Message.TEXT:
             in_texts.put(message)
+        elif message.action == Message.DISCONNECT:
+            in_disconnect.put(message)
 
 
 def send_message(message: Message):

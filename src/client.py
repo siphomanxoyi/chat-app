@@ -103,10 +103,25 @@ def get_next_text_message():
 
 def disconnect_from_server():
     """Disconnect from the server."""
+    global connected
+    from queue_util import in_disconnect
+    from message_util import Message
 
+    close_state = 0
 
-def get_read_receipt():
-    """Get read receipt for specific message."""
+    while connected:
+        if close_state == 0:
+            dis = message_util.create_disconnect_message(username, server_username)
+            protocol_util.send_message(dis)
+            close_state += 1
+        elif close_state == 1:
+            dis_ack = in_disconnect.get()
+            if dis_ack.action == Message.DISCONNECT:
+                close_state += 1
+        elif close_state == 2:
+            connected = False
+    time.sleep(1)
+    return True
 
 
 def verify_message():
