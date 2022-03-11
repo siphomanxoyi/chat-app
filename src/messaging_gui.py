@@ -101,8 +101,8 @@ alertBox = Label(menuFrame, text="", fg="white", bg="grey")
 def check_messages():
 
     while(True): #[0] is the sender and [2] is the message
-        rMess = client.get_next_text_message()[0] + "|" + client.get_next_text_message()[2]
-        print(rMess)
+        messageArr = client.get_next_text_message()
+        rMess = messageArr[0] + " | " + messageArr[2]
         if(rMess != ""):
             display_message(rMess)
     
