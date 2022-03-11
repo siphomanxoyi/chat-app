@@ -41,12 +41,11 @@ def send_message(message: Message):
     """Send message."""
 
     gram = Gram()
-    if message.action == Message.TEXT:
-
     address = find_destination_address(message)
     gram.destination_address = address
     gram.payload = repr(message).encode()
     send_q.put(gram)
+
 
 def find_destination_address(message: Message):
     """ Returns a tuple of the appropriate destination address and port for this message."""

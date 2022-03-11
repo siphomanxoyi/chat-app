@@ -10,7 +10,7 @@ import time
 import protocol_util
 import message_util
 
-username = "USER_0"
+username = "USER_"
 server_username = "SERVER"
 connected = False
 
@@ -62,7 +62,7 @@ def fetch_users():
     return None
 
 
-def send_text_message(body: str, target_user: str):
+def send_text_message(body: str, recipient: str):
     """Send a text message to another user."""
 
     from queue_util import in_acks
@@ -76,7 +76,7 @@ def send_text_message(body: str, target_user: str):
         count += 1
 
         if count > 3:
-            message = message_util.create_text_message(username, target_user, body)
+            message = message_util.create_text_message(username, server_username, recipient, body)
             protocol_util.send_message(message)
             count = 0
             send_count += 1

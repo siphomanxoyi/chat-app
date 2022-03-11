@@ -38,7 +38,6 @@ def send_address_book():
 def route_text_messages():
     """Routes TEXT messages to recipients."""
     from queue_util import in_texts
-    import address_book_util
 
     while True:
         message = in_texts.get()
@@ -46,6 +45,11 @@ def route_text_messages():
         if message.action == Message.TEXT:
             ack = message_util.create_ack_message(message)
             protocol_util.send_message(ack)
+            sender = message.source_user
+            message.source_user = username
+            message.target_user = message.convo_partner
+            message.convo_partner = sender
+            protocol_util.send_message(message)
 
 
 def setup():

@@ -70,9 +70,11 @@ def is_fetch_users_message(message: Message):
     return False
 
 
-def create_text_message(source_user: str, target_user: str, recipient="", body: str):
+def create_text_message(source_user: str, target_user: str, convo_partner: str, body: str):
     """Create a Message object with action = TEXT."""
-    return Message(source_user=source_user, target_user=target_user, action=Message.TEXT, body=body)
+    m = Message(source_user=source_user, target_user=target_user, action=Message.TEXT, body=body)
+    m.convo_partner = convo_partner
+    return m
 
 
 def main():
