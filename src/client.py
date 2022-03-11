@@ -15,11 +15,17 @@ server_username = "SERVER"
 connected = False
 
 
+def set_username(nickname: str):
+    """Set the username of the current user."""
+    global username
+    username = nickname
+
+
 def connect_to_server():
     """Connect to the server."""
     global username, connected
+    from queue_util import in_connect
 
-    username = "keeran"
     handshake_state = 0
 
     while not connected:
@@ -28,7 +34,7 @@ def connect_to_server():
             protocol_util.send_message(syn)
             handshake_state += 1
         elif handshake_state == 1:  # SYN2-ACK1
-            syn_ack = message_inbox.get()
+            syn_ack = in_connect.get()
             if message_util.is_connect_ack_message(syn_ack):
                 handshake_state += 1
         elif handshake_state == 2:  # SYN3-ACK2
@@ -37,12 +43,8 @@ def connect_to_server():
             handshake_state += 1
         elif handshake_state == 3:
             connected = True
+    time.sleep(1)
     print_message("Client-Server Handshake Complete.")
-
-
-def ping_server():
-    protocol_util.process_message_out(message_util.create_ping_message(username, "server"))
-
 
 def create_user():
     """Create a user."""
@@ -91,6 +93,9 @@ def setup():
     """Setup sockets and establish a connection."""
     transmission_util.create_sockets(False)
     time.sleep(1)
+    protocol_util.start()
+    time.sleep(1)
+
 
 
 def main():

@@ -5,6 +5,8 @@ send_q = queue.Queue()
 recv_q = queue.Queue()
 message_inbox = queue.Queue()
 
+# Organised Queues for Incoming Messages
+in_connect = queue.Queue()
 
 def main():
     print_message("Queue Util")

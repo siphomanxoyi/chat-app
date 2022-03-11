@@ -5,32 +5,26 @@ from queue_util import recv_q
 from queue_util import send_q
 from gram_class import Gram
 from message_class import Message
+from threading import Thread
+from queue_util import message_inbox
 
 import address_book_util
 import message_util
 
-def process_message_in(message: Message):
+
+def sort_messages_in():
     """ Process incoming messages."""
+    from queue_util import in_connect
+    while True:
+        message = message_inbox.get()
+        print_message(repr(message))
 
-    print_message(repr(message))
-    if message.action == Message.BLANK:
-        return message
-    elif message.action == Message.ACK:
-        return message
-    elif message.action == Message.PING:
-        ack = message_util.create_ack_message(message)
-        send_message(ack)
-        return message
-
-
-def process_message_out(message: Message):
-    """ Process outgoing messages."""
-
-    print_message(repr(message))
-    if message.action == Message.BLANK:
-        return None
-    elif message.action == Message.PING:
-        send_message(message)
+        if message.action == Message.BLANK:
+            return message
+        elif message.action == Message.CONNECT:
+            in_connect.put(message)
+        elif message.action == Message.CONNECT_ACK:
+            in_connect.put(message)
 
 
 def send_message(message: Message):
@@ -42,22 +36,16 @@ def send_message(message: Message):
     gram.payload = repr(message).encode()
     send_q.put(gram)
 
-
-def receive_message():
-    """Return a message from the queue."""
-    gram = recv_q.get(block=True)
-    message = eval(gram.payload.decode())
-
-    if message.target_user.upper() == "SERVER":
-        address_book_util.add_to_address_book(message.source_user, gram.source_address)
-
-    process_message_in(message)
-
-
 def find_destination_address(message: Message):
     """ Returns a tuple of the appropriate destination address and port for this message."""
 
     return address_book_util.address_book.get(message.target_user.upper())[0]
+
+
+def start():
+    """Start the protocol."""
+    process_inbox = Thread(target=sort_messages_in, args=())
+    process_inbox.start()
 
 
 def main():
