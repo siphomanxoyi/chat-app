@@ -11,7 +11,6 @@ import client
 from log_util import dated_message
 from ip_util import ip
 from message_util import create_ping_message
-from protocol_util import start
 from protocol_util import send_message
 from protocol_util import sort_messages_in
 
@@ -110,9 +109,12 @@ alertBox = Label(menuFrame, text="", fg="white", bg="grey")
 #Main functionality function, starts the program
 def driveM():
     #Create a client
-    client.set_username(tempUser)
-    client.main()
-    start()
+    #client.set_username(tempUser)
+    #client.setup()
+    #if (client.connect_to_server()):
+    #    alert("Connected to server successfully.")
+    #else:
+    #    alert("Failed to connect to server.")
     #global connect
     #connect()
     #Run command

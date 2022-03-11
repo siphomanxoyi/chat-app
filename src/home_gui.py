@@ -7,7 +7,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 # importing client/server file methods
-from address_book_util import address_book
+import client
 
 # default host client and contacted client or server names
 tempUser = "Default"
@@ -95,6 +95,12 @@ class signup(tk.Frame):
                 ent.delete(0,END) #Clearing input field
                 ent.pack()
                 show_button()
+                client.set_username(tempUser)
+                client.setup()
+                if (client.connect_to_server()):
+                    alert("Connected to server successfully.")
+                else:
+                    alert("Failed to connect to server.")
             else:
                 alert("Please input a username")
 
@@ -131,19 +137,6 @@ class online(tk.Frame):
         def open_messaging():
             exec(open("driverM.py").read())
 
-        # opens messaging_gui for chosen user communication
-        def choose_peer():
-            chosen = chosenUser.get()
-            if (chosen == ""):
-                alert("Please pick a user.")
-            elif(onlineUsers.search(">>" + chosen, "0.0") == ""):
-                alert("Please pick a valid online user.")
-            else:
-                global tempChatUser
-                tempChatUser = chosen
-                open_messaging()
-
-
         # clears users list when refreshing
         def clear(): 
             onlineUsers.delete('1.0',END)
@@ -162,15 +155,33 @@ class online(tk.Frame):
 
         # looping through online list to display a button for each
         def get_online():
+            import address_book_util
             onlineUsers['state'] = NORMAL
             clear()
-            for client in address_book.keys():
-                onlineUsers.insert("end",">>" + client + "\n")
+            if(client.fetch_users()):
+                    for user in address_book_util.address_book:
+                        if(user != tempUser):
+                            onlineUsers.insert("end",">>" + user + "\n")
+                    alert("Fetched online users successfully.")
+            else:
+                alert("Failed to fetch online users.")
             onlineUsers['state'] = DISABLED
 
         # input field for user to choose who to chat with
         chosenUser = Entry(self)
         chosenUser.pack()
+
+        # opens messaging_gui for chosen user communication
+        def choose_peer():
+            chosen = chosenUser.get()
+            if (chosen == ""):
+                alert("Please pick a user.")
+            elif(onlineUsers.search(">>" + chosen, "0.0") == ""):
+                alert("Please pick a valid online user.")
+            else:
+                global tempChatUser
+                tempChatUser = chosen
+                open_messaging()
 
         # button to refresh online list
         buttonReturn = ttk.Button(self, text = "Refresh",
