@@ -45,8 +45,8 @@ def display_message(rMess):
     tex.insert("end", (dated_message(rMess) + "\n"), "rec")
     tex.pack(side=TOP, fill=X)
 
-#Label to tell you who you are talking to
-cuLabel = Label(root, text = "Chatting to: " + tempChatUser)
+#Label to tell you who you are
+cuLabel = Label(root, text = "YOU ARE: " + tempUser)
 cuLabel.pack()
 
 #Message input field
@@ -100,8 +100,8 @@ alertBox = Label(menuFrame, text="", fg="white", bg="grey")
 #Constantly checking for new messages
 def check_messages():
 
-    while(True):
-        rMess = client.get_next_text_message()[2]
+    while(True): #[0] is the sender and [2] is the message
+        rMess = client.get_next_text_message()[0] + "|" + client.get_next_text_message()[2]
         print(rMess)
         if(rMess != ""):
             display_message(rMess)
