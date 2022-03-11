@@ -93,6 +93,13 @@ def send_text_message(body: str, recipient: str):
             pass
     return True  # messaged received by SERVER
 
+def get_next_text_message():
+    """Receive TEXT messages."""
+    from queue_util import in_texts
+    from message_class import Message
+
+    message = in_texts.get()
+    return [message.convo_partner, message.target_user, message.body] # FROM , TO (THIS USER) , BODY
 
 def disconnect_from_server():
     """Disconnect from the server."""
