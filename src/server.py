@@ -22,6 +22,19 @@ def client_connections():
             print_message("Connected to: " + message.source_user.upper())
 
 
+def send_address_book():
+    """Connect to the server."""
+    from queue_util import in_fetch_users
+    import address_book_util
+    while True:
+        message = in_fetch_users.get()
+
+        if message.action == Message.FETCH_USERS:
+            book = repr(address_book_util.address_book)
+            m = message_util.create_fetch_users_message(username, message.source_user, book)
+            protocol_util.send_message(m)
+        print_message("Sending list of users to: " + message.source_user.upper())
+
 def setup():
     """Setup sockets and establish a connection."""
     create_sockets(True)
@@ -30,6 +43,8 @@ def setup():
     time.sleep(1)
     handshaker = Thread(target=client_connections, args=())
     handshaker.start()
+    yellow_pages = Thread(target=send_address_book, args=())
+    yellow_pages.start()
 
 
 def main():

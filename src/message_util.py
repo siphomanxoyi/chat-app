@@ -58,6 +58,17 @@ def is_ack_message(message: Message):
     return False
 
 
+def create_fetch_users_message(source_user: str, target_user: str, body=""):
+    """Create a Message object with action = FETCH_USERS."""
+    return Message(source_user=source_user, target_user=target_user, action=Message.FETCH_USERS, body=body)
+
+
+def is_fetch_users_message(message: Message):
+    """Checks if Message action is FETCH_USERS"""
+    if message.action == Message.FETCH_USERS:
+        return True
+    return False
+
 def main():
     print_message("Message Util")
 

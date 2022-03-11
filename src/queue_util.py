@@ -7,6 +7,7 @@ message_inbox = queue.Queue()
 
 # Organised Queues for Incoming Messages
 in_connect = queue.Queue()
+in_fetch_users = queue.Queue()
 
 def main():
     print_message("Queue Util")

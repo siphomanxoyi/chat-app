@@ -15,6 +15,8 @@ import message_util
 def sort_messages_in():
     """ Process incoming messages."""
     from queue_util import in_connect
+    from queue_util import in_fetch_users
+
     while True:
         message = message_inbox.get()
         print_message(repr(message))
@@ -25,6 +27,8 @@ def sort_messages_in():
             in_connect.put(message)
         elif message.action == Message.CONNECT_ACK:
             in_connect.put(message)
+        elif message.action == Message.FETCH_USERS:
+            in_fetch_users.put(message)
 
 
 def send_message(message: Message):

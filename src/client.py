@@ -10,7 +10,7 @@ import time
 import protocol_util
 import message_util
 
-username = ""
+username = "USER_0"
 server_username = "SERVER"
 connected = False
 
@@ -23,7 +23,7 @@ def set_username(nickname: str):
 
 def connect_to_server():
     """Connect to the server."""
-    global username, connected
+    global connected
     from queue_util import in_connect
 
     handshake_state = 0
@@ -45,14 +45,21 @@ def connect_to_server():
             connected = True
     time.sleep(1)
     print_message("Client-Server Handshake Complete.")
-
-def create_user():
-    """Create a user."""
+    return True
 
 
 def fetch_users():
     """Fetch a list of online users."""
+    from queue_util import in_fetch_users
+    import address_book_util
 
+    if connected:
+        request = message_util.create_fetch_users_message(username, server_username)
+        protocol_util.send_message(request)
+        response = in_fetch_users.get()
+        address_book_util.address_book = eval(response.body)
+        return True
+    return None
 
 def disconnect_from_server():
     """Disconnect from the server."""
@@ -101,7 +108,8 @@ def setup():
 def main():
     print_message("Starting Client")
     setup()
-    connect_to_server()
+    if connect_to_server():
+        fetch_users()
 
 
 if __name__ == "__main__":
