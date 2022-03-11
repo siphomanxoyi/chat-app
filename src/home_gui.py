@@ -90,7 +90,7 @@ class signup(tk.Frame):
         def new_client():
             usernameStored = ent.get()
             if usernameStored != "":
-                labelConf['text'] = ("Welcome " + usernameStored)
+                labelConf['text'] = ("Welcome " + usernameStored.upper())
                 newUser(usernameStored)
                 ent.delete(0,END) #Clearing input field
                 ent.pack()
@@ -192,8 +192,15 @@ class online(tk.Frame):
         messButton = ttk.Button(self, text = "Connect", command=choose_peer)
         messButton.pack(side=BOTTOM)
 
+#Disconnecting and ending the session
+def log_out_all():
+    #disCon = create_disconnect_message(tempUser,tempChatUser)
+    global app
+    app.destroy()
+
 
 def drive():
     # driver Code
+    global app
     app = home()
     app.mainloop()

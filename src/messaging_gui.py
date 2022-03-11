@@ -39,14 +39,11 @@ v.config(command=tex.yview) #Final scrollbar configuration
 tex.tag_config("rec", background="lightblue") #Text box message colors' control
 tex.tag_config("sent", background="lightgreen", justify="right")
 
-#Testing receiving messages display:
-##Recieved message display
-#def display_message(rMess):
-#    tex.insert("end", (dated_message(rMess) + "\n"), "rec")
-#    tex.pack(side=TOP, fill=X)
-#
-##Test example function call for received message
-#display_message("This is a pretty long message. This is a pretty long message. This is a pretty long message. This is a pretty long message.")
+
+#Recieved message display
+def display_message(rMess):
+    tex.insert("end", (dated_message(rMess) + "\n"), "rec")
+    tex.pack(side=TOP, fill=X)
 
 #Label to tell you who you are talking to
 cuLabel = Label(root, text = "Chatting to: " + tempChatUser)
@@ -64,11 +61,13 @@ def send_a_message():
         alert("Please input a message.")
     else:
         #Sending message from client
-        newMessage = create_ping_message(tempUser, tempChatUser)
-        send_message(newMessage)
-        #Sent message display
-        tex.insert("end", dated_message(messBody) + "\n", "sent") #Displaying sent message to screen
-        tex.pack(side=TOP, fill=X)
+        if (client.send_text_message(messBody, tempChatUser) == True):
+            alert("Message sent successfully.")
+            #Sent message display
+            tex.insert("end", dated_message(messBody) + "\n", "sent") #Displaying sent message to screen
+            tex.pack(side=TOP, fill=X)
+        else:
+            alert("Message could not be sent")
         e.delete(0,END) #Clearing input field
         e.pack()
 
@@ -85,7 +84,9 @@ sendButton.pack()
 
 #Disconnecting and ending the session
 def log_out():
-    #disCon = create_disconnect_message(tempUser,tempChatUser)
+    client.disconnect_from_server()
+    from home_gui import log_out_all
+    log_out_all()
     global root
     root.destroy()
 
@@ -96,8 +97,20 @@ logoutButton.pack()
 #Program feedback will be shown in this label
 alertBox = Label(menuFrame, text="", fg="white", bg="grey")
 
+#Constantly checking for new messages
+def check_messages():
+
+    while(True):
+        rMess = client.get_next_text_message()[2]
+        print(rMess)
+        if(rMess != ""):
+            display_message(rMess)
+    
+
 #Main functionality function, starts the program
 def driveM():
+    incMessThread = threading.Thread(target=check_messages)
+    incMessThread.start()
     #Run command
     global root
     root.mainloop()
